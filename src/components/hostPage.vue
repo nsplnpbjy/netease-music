@@ -53,7 +53,7 @@ export default {
     },
     searchUrl: {
       type: String,
-      default: 'http://192.168.0.108:8075/search'
+      default: 'http://192.168.0.111:8075/search'
     },
     songs:{
       type: JSON,
@@ -62,11 +62,11 @@ export default {
   },
   methods:{
          loadSrc:function (id,musicName,fee){
-              if (fee!=8){
+              if (fee==1){
                 alert("收费歌曲,无法播放");
                 return;
               }
-              this.audioSrc = "http://192.168.0.108:8075/music?id="+encodeURIComponent(id+".mp3")+"&musicName="+encodeURIComponent(musicName);
+              this.audioSrc = "http://192.168.0.111:8075/music?id="+encodeURIComponent(id+".mp3")+"&musicName="+encodeURIComponent(musicName);
               this.playSwitch=true;
 
         },
