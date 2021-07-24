@@ -7,14 +7,14 @@
       <img class="pic" alt="pic" :src="picUrl" :hidden="picHide">
     </div>
     <div>
-    <audio ref="audioRef" :src = 'audioSrc'  id="player" preload="auto" controls @timeupdate="timeUpDate">
+    <audio ref="audioRef" :src = 'audioSrc'  id="player" preload="auto" controls @timeupdate="timeUpDate"  @loadstart="loadNew()">
       你的浏览器不支持audio标签
     </audio>
     </div>
     <input v-model="searchText" placeholder="请输入歌曲名"/>
     <button v-on:click="searchMethod">搜索</button>
     <div>
-      <textarea class="audio" v-model="showingLyric" readonly="readonly" style="margin: 0px; height: 93px; width: 483px;">
+      <textarea class="audio" v-model="showingLyric" readonly="readonly" style="margin: 0px; height: 93px; width: 483px;" :hidden="isNotShowingLyric">
 
       </textarea>
     </div>
@@ -34,7 +34,7 @@
           <template slot-scope="scope">
             <el-button
                 size="mini"
-                @click="resetShowingLyric();loadSrc(scope.row.id,scope.row.name);loadPic(scope.row.id)">▶♫</el-button>
+                @click="loadSrc(scope.row.id,scope.row.name);loadPic(scope.row.id)">▶♫</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -57,6 +57,10 @@ Vue.use(VueAxios,axios);  //使用
 export default {
   name: 'hostPage',
   props: {
+    isNotShowingLyric:{
+      type:Boolean,
+      default:true
+    },
     logoHide: {
       default:false
     },
@@ -95,7 +99,7 @@ export default {
     },
   },
   methods:{
-    resetShowingLyric(){
+    loadNew(){
       this.showingLyric = "歌词正在加载...";
     },
     loadPic(id){
@@ -177,6 +181,7 @@ export default {
                 this.parseLyric(this.lyric);
                 this.timeUpDatable = true;
                 this.$refs.audioRef.play();
+                this.isNotShowingLyric = false;
               })
          },
         searchMethod(){
