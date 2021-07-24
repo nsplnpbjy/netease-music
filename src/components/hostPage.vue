@@ -1,29 +1,40 @@
 <template>
   <div>
     <div>
-    <audio :src = 'audioSrc'  id="player" preload="auto" controls :autoplay="playSwitch">
+      <img alt="logo" src="../assets/logo.png" :hidden="logoHide">
+    </div>
+    <div>
+      <img class="pic" alt="pic" :src="picUrl" :hidden="picHide">
+    </div>
+    <div>
+    <audio ref="audioRef" :src = 'audioSrc'  id="player" preload="auto" controls @timeupdate="timeUpDate">
       你的浏览器不支持audio标签
     </audio>
     </div>
     <input v-model="searchText" placeholder="请输入歌曲名"/>
     <button v-on:click="searchMethod">搜索</button>
     <div>
+      <textarea class="audio" v-model="showingLyric" readonly="readonly" style="margin: 0px; height: 93px; width: 483px;">
+
+      </textarea>
+    </div>
+    <div class="audio">
       <el-table :data="songs" style="width: 100%">
         <el-table-column
             prop="name"
             label="歌曲名"
-            width="650">
+            style="width: 100%">
         </el-table-column>
         <el-table-column
             prop="artists[0].name"
             label="艺人"
-            width="650">
+            style="width: 100%">
         </el-table-column>
-        <el-table-column label="选择">
+        <el-table-column label="选择" style="width: 100%">
           <template slot-scope="scope">
             <el-button
                 size="mini"
-                @click="loadSrc(scope.row.id,scope.row.name,scope.row.fee)">▶♫</el-button>
+                @click="loadSrc(scope.row.id,scope.row.name,scope.row.fee);loadPic(scope.row.id)">▶♫</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -38,38 +49,121 @@ import Vue from 'vue'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
-Vue.use(ElementUI)
+Vue.use(ElementUI);
 Vue.use(VueAxios,axios);  //使用
+
+
+
 export default {
   name: 'hostPage',
   props: {
+    logoHide: {
+      default:false
+    },
+    picHide: {
+      default:true
+    },
+    picUrl:null,
+    currentTime:null,
+    showingLyric:null,
     preSongs:null,
-    msg: String,
     audioSrc:null,
     searchText:null,
-    playSwitch:{
-      type: Boolean,
-      default: false,
-    },
     searchUrl: {
       type: String,
-      default: 'http://192.168.0.111:8075/search'
+      default: 'http://192.168.0.111:8074/search'
     },
     songs:{
       type: JSON,
       default: null
-    }
+    },
+    data() {
+      return {
+        lyric:{
+          type:String,
+          default:""
+        },
+        lyricList:{
+          type:[],
+          default:[]
+        }
+      }
+    },
   },
   methods:{
-         loadSrc:function (id,musicName,fee){
+    loadPic(id){
+      for (let songsKey in this.songs) {
+        if (this.songs[songsKey].id==id){
+          this.picUrl = this.songs[songsKey].album.blurPicUrl;
+          this.logoHide = true;
+          this.picHide = false;
+        }
+      }
+    },
+
+                //歌词格式转秒数函数,此函数不可用，待解决
+    parseLyric(lyric) {
+      this.lyricList = [];
+      let lyrics = lyric.split('\n');
+      let formedLyrics = [];
+      for (let lyricsKey in lyrics) {
+        if (lyrics[lyricsKey]!=""){
+          formedLyrics.push(lyrics[lyricsKey]);
+        }
+      }
+      for (let formedLyricsKey in formedLyrics) {
+          let time = formedLyrics[formedLyricsKey].split(']')[0];
+          time = time.replace(/\[/g,"");
+          let min = time.split(":")[0];
+          let sec = time.split(":")[1];
+          time = Number(min*60)+ Number(sec);
+          time = Math.trunc(time) ;
+          let text = formedLyrics[formedLyricsKey].split(']')[1];
+          let cube = [];
+          cube.push(time);
+          cube.push(text);
+          this.lyricList.push(cube);
+      }
+      console.log(this.lyricList);
+    },
+
+          timeUpDate(){
+            let currentTime = this.$refs.audioRef.currentTime;
+            currentTime = Math.trunc(currentTime);
+            for (let i = 0;i<this.lyricList.length;i++){
+              if (currentTime == this.lyricList[i][0]){
+                let showingLyric = "";
+                showingLyric = showingLyric + this.lyricList[i][1] + '\n';
+                if ((i+1)<this.lyricList.length){
+                  showingLyric = showingLyric + this.lyricList[i+1][1] + '\n';
+                }
+                if ((i+2)<this.lyricList.length){
+                  showingLyric = showingLyric + this.lyricList[i+2][1] + '\n';
+                }
+                if ((i+3)<this.lyricList.length){
+                  showingLyric = showingLyric + this.lyricList[i+3][1] + '\n';
+                }
+                if ((i+4)<this.lyricList.length){
+                  showingLyric = showingLyric + this.lyricList[i+4][1] + '\n';
+                }
+                this.showingLyric = showingLyric;
+              }
+            }
+          },
+         loadSrc(id,musicName,fee){
               if (fee==1){
                 alert("收费歌曲,无法播放");
                 return;
               }
-              this.audioSrc = "http://192.168.0.111:8075/music?id="+encodeURIComponent(id+".mp3")+"&musicName="+encodeURIComponent(musicName);
-              this.playSwitch=true;
-
-        },
+              this.audioSrc = "http://192.168.0.111:8074/music?id="+encodeURIComponent(id+".mp3")+"&musicName="+encodeURIComponent(musicName);
+              Vue.axios.get('http://192.168.0.111:8074/lyric?id='+encodeURIComponent(id)).then((response)=>{
+                this.lyric = response.data.data.lyric;
+                this.parseLyric(this.lyric);
+                this.$refs.audioRef.play();
+              }).catch((response) => {
+                console.log(response.data.msg);
+              })
+         },
         searchMethod(){
           Vue.axios.post(this.searchUrl, {//发送请求 跳转页面
             s: this.searchText,
@@ -89,18 +183,16 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+.pic{
+  text-align: center;
+  width: 400px;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+.audio {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: gray;
+  margin-top: 60px;
 }
 </style>
