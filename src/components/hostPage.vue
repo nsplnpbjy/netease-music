@@ -34,7 +34,7 @@
           <template slot-scope="scope">
             <el-button
                 size="mini"
-                @click="loadSrc(scope.row.id,scope.row.name,scope.row.fee);loadPic(scope.row.id)">▶♫</el-button>
+                @click="resetShowingLyric();loadSrc(scope.row.id,scope.row.name);loadPic(scope.row.id)">▶♫</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -86,11 +86,18 @@ export default {
         lyricList:{
           type:[],
           default:[]
+        },
+        timeUpDatable:{
+          type:Boolean,
+          default:false
         }
       }
     },
   },
   methods:{
+    resetShowingLyric(){
+      this.showingLyric = "歌词正在加载...";
+    },
     loadPic(id){
       for (let songsKey in this.songs) {
         if (this.songs[songsKey].id==id){
@@ -128,6 +135,9 @@ export default {
     },
 
           timeUpDate(){
+            if(!this.timeUpDatable){
+              return;
+            }
             let currentTime = this.$refs.audioRef.currentTime;
             currentTime = Math.trunc(currentTime);
             for (let i = 0;i<this.lyricList.length;i++){
@@ -150,19 +160,23 @@ export default {
               }
             }
           },
-         loadSrc(id,musicName,fee){
-              if (fee==1||fee==0){
-                alert("收费歌曲,无法播放");
-                return;
-              }
-              this.showingLyric=null;
+         loadSrc(id,musicName){
+              Vue.axios.get('http://192.168.0.111:8074/isOk?id='+encodeURIComponent(id)).then((response)=>{
+                if (response.data.data=='no'){
+                  alert("收费歌曲,无法播放");
+                  return;
+                }
+              })
               this.audioSrc = "http://192.168.0.111:8074/music?id="+encodeURIComponent(id+".mp3")+"&musicName="+encodeURIComponent(musicName);
               Vue.axios.get('http://192.168.0.111:8074/lyric?id='+encodeURIComponent(id)).then((response)=>{
+                if (response.data.data.nolyric){
+                  this.$refs.audioRef.play();
+                  return;
+                }
                 this.lyric = response.data.data.lyric;
                 this.parseLyric(this.lyric);
+                this.timeUpDatable = true;
                 this.$refs.audioRef.play();
-              }).catch((response) => {
-                console.log(response.data.msg);
               })
          },
         searchMethod(){
