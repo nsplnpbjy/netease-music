@@ -151,10 +151,11 @@ export default {
             }
           },
          loadSrc(id,musicName,fee){
-              if (fee==1){
+              if (fee==1||fee==0){
                 alert("收费歌曲,无法播放");
                 return;
               }
+              this.showingLyric=null;
               this.audioSrc = "http://192.168.0.111:8074/music?id="+encodeURIComponent(id+".mp3")+"&musicName="+encodeURIComponent(musicName);
               Vue.axios.get('http://192.168.0.111:8074/lyric?id='+encodeURIComponent(id)).then((response)=>{
                 this.lyric = response.data.data.lyric;
