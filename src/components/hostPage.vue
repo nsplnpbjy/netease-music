@@ -14,7 +14,7 @@
     <input v-model="searchText" placeholder="请输入歌曲名"/>
     <button v-on:click="searchMethod">搜索</button>
     <div>
-      <textarea class="audio" v-model="showingLyric" readonly="readonly" style="margin: 0px; height: 93px; width: 483px;" :hidden="isNotShowingLyric">
+      <textarea class="audio" v-model="showingLyric" readonly="readonly" style="margin: 0px; height: 100px; width: 600px; resize: none;" :hidden="isNotShowingLyric">
 
       </textarea>
     </div>
@@ -51,7 +51,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.use(ElementUI);
 Vue.use(VueAxios,axios);  //使用
-
+Vue.prototype.axios.defaults.baseURL='http://localhost:8074';
+var baseUrl = 'http://localhost:8074';
 
 
 export default {
@@ -75,7 +76,7 @@ export default {
     searchText:null,
     searchUrl: {
       type: String,
-      default: 'http://192.168.0.111:8074/search'
+      default: '/search'
     },
     songs:{
       type: JSON,
@@ -165,14 +166,14 @@ export default {
             }
           },
          loadSrc(id,musicName){
-              Vue.axios.get('http://192.168.0.111:8074/isOk?id='+encodeURIComponent(id)).then((response)=>{
+              Vue.axios.get('/isOk?id='+encodeURIComponent(id)).then((response)=>{
                 if (response.data.data=='no'){
                   alert("收费歌曲,无法播放");
                   return;
                 }
               })
-              this.audioSrc = "http://192.168.0.111:8074/music?id="+encodeURIComponent(id+".mp3")+"&musicName="+encodeURIComponent(musicName);
-              Vue.axios.get('http://192.168.0.111:8074/lyric?id='+encodeURIComponent(id)).then((response)=>{
+              this.audioSrc = baseUrl+"/music?id="+encodeURIComponent(id+".mp3")+"&musicName="+encodeURIComponent(musicName);
+              Vue.axios.get('/lyric?id='+encodeURIComponent(id)).then((response)=>{
                 if (response.data.data.nolyric){
                   this.$refs.audioRef.play();
                   return;
