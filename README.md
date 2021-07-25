@@ -8,4 +8,8 @@
 npm run build
 ```
 
+或者直接下载release的版本，解压后得到dist文件夹。
+
+以上步骤完成后
+
 然后把dist文件夹复制到服务器上，并使用Nginx配置好端口转发
