@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <img alt="logo" src="../assets/logo.png" :hidden="logoHide">
+      <img alt="logo" src="../assets/logo.png" class="pic" :hidden="logoHide">
     </div>
     <div>
       <img ref="pic" class="pic" alt="pic" :src="picUrl" :hidden="picHide">
@@ -22,7 +22,7 @@
     <input v-model="searchText" placeholder="请输入歌曲名"/>
     <button v-on:click="searchMethod">搜索</button>
     <div>
-      <textarea class="audio" v-model="showingLyric" readonly="readonly" style="margin: 0px; height: 100px; width: 600px; resize: none;" :hidden="isNotShowingLyric">
+      <textarea class="audio" v-model="showingLyric" readonly="readonly" style="margin: 0px; height: 100px; width: 100%; resize: none; border: none" :hidden="isNotShowingLyric">
 
       </textarea>
     </div>
@@ -119,7 +119,7 @@ export default {
     loadNew(){
       this.picHide = true;
       this.loadingHide = false;
-      this.showingLyric = "歌词正在加载...";
+      this.showingLyric = "...歌词正在加载...";
     },
     loadPic(id){
       for (let songsKey in this.songs) {
@@ -222,8 +222,11 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .pic{
-  text-align: center;
-  width: 400px;
+  align-content: center;
+  height: 300px;
+  width: 220px;
+  border-radius:40%;
+  position: relative;
 }
 .forTable{
   align: center;
@@ -231,11 +234,13 @@ export default {
   align-content: center;
 }
 .audio {
+  font-size: 18px;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: gray;
   margin-top: 60px;
+  overflow: hidden;
 }
 </style>
