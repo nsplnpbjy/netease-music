@@ -4,10 +4,18 @@
       <img alt="logo" src="../assets/logo.png" :hidden="logoHide">
     </div>
     <div>
-      <img class="pic" alt="pic" :src="picUrl" :hidden="picHide">
+      <img ref="pic" class="pic" alt="pic" :src="picUrl" :hidden="picHide">
+    </div>
+    <div :hidden="loadingHide">
+      <div>
+      <img class="pic" alt="loading" src='../assets/loading.gif' >
+      </div>
+      <div>
+        <p>...正在加载，请稍后...</p>
+      </div>
     </div>
     <div>
-    <audio ref="audioRef" :src = 'audioSrc'  id="player" preload="auto" controls @timeupdate="timeUpDate"  @loadstart="loadNew()">
+    <audio ref="audioRef" :src = 'audioSrc'  id="player" preload="auto" controls @timeupdate="timeUpDate"  @loadstart="loadNew()" @canplay="canplay()" >
       你的浏览器不支持audio标签
     </audio>
     </div>
@@ -19,7 +27,7 @@
       </textarea>
     </div>
     <div class="audio">
-      <el-table :data="songs" style="width: 100%">
+      <el-table :data="songs" style="width: 100%" class="forTable">
         <el-table-column
             prop="name"
             label="歌曲名"
@@ -62,6 +70,9 @@ export default {
       type:Boolean,
       default:true
     },
+    loadingHide:{
+      default:true
+    },
     logoHide: {
       default:false
     },
@@ -100,7 +111,14 @@ export default {
     },
   },
   methods:{
+    canplay(){
+      this.loadingHide = true;
+      this.picHide = false;
+      this.$refs.audioRef.play();
+    },
     loadNew(){
+      this.picHide = true;
+      this.loadingHide = false;
       this.showingLyric = "歌词正在加载...";
     },
     loadPic(id){
@@ -181,7 +199,6 @@ export default {
                 this.lyric = response.data.data.lyric;
                 this.parseLyric(this.lyric);
                 this.timeUpDatable = true;
-                this.$refs.audioRef.play();
                 this.isNotShowingLyric = false;
               })
          },
@@ -207,6 +224,11 @@ export default {
 .pic{
   text-align: center;
   width: 400px;
+}
+.forTable{
+  align: center;
+  text-align: right;
+  align-content: center;
 }
 .audio {
   font-family: Avenir, Helvetica, Arial, sans-serif;
