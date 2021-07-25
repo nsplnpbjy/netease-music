@@ -51,8 +51,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.use(ElementUI);
 Vue.use(VueAxios,axios);  //使用
-Vue.prototype.axios.defaults.baseURL='http://localhost:8074';
-var baseUrl = 'http://localhost:8074';
+var baseUrl = 'http://192.168.0.111:8074';
+Vue.prototype.axios.defaults.baseURL=baseUrl;
 
 
 export default {
