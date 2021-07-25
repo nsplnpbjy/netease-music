@@ -1,24 +1,11 @@
 # netease-music
+本项目是一个蹩脚的播放器，集合了搜索音乐、播放音乐、下载音乐、显示歌词和专辑封面等功能，需结合配套服务器使用。
+配套服务器项目地址：https://github.com/nsplnpbjy/netease-music-copy
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
+以下是使用方法
+### 制作dist
 ```
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+然后把dist文件夹复制到服务器上，并使用Nginx配置好端口转发
