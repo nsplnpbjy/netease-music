@@ -27,7 +27,7 @@
       </textarea>
     </div>
     <div class="audio">
-      <el-table :data="songs" style="width: 100%" class="forTable">
+      <el-table :data="songs" style="width: 100%;height: 450px;overflow: auto" class="forTable">
         <el-table-column
             prop="name"
             label="歌曲名"
@@ -206,7 +206,7 @@ export default {
           Vue.axios.post(this.searchUrl, {//发送请求 跳转页面
             s: this.searchText,
             offset: '0',
-            limit: '20',
+            limit: '100',
             type: '1'
           }).then((response) => {
             this.songs = response.data.data.result.songs;
