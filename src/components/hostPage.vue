@@ -30,12 +30,15 @@
       <div>
         <el-divider></el-divider>
       </div>
+      <div>
+        <p style="font-size: 18px;font-family: Avenir, Helvetica, Arial, sans-serif;color: firebrick">{{musicName}}</p>
+      </div>
       <el-button type="primary" @click="showDrawer = true">播放列表</el-button>
       <el-drawer
           title="播放列表"
           :visible.sync="showDrawer"
           direction="rtl"
-          size="50%">
+          size="70%">
         <el-table :data="playList">
           <el-table-column
               prop="1"
@@ -47,11 +50,11 @@
               label="艺人"
               style="width: 150px">
           </el-table-column>
-          <el-table-column label="选择" style="width: 100%">
+          <el-table-column label="播放" style="width: 100%">
             <template slot-scope="scope">
               <el-button
                   size="mini"
-                  @click="loadSrc(scope.row[0],scope.row[1]);setPlayingId(scope.row[0]);loadPic(scope.row[0]);">▶♫</el-button>
+                  @click="loadSrc(scope.row[0],scope.row[1]);setPlayingId(scope.row[0],scope.row[1]);loadPic(scope.row[0]);">▶♫</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -97,6 +100,7 @@ Vue.prototype.axios.defaults.baseURL=baseUrl;
 export default {
   name: 'hostPage',
   props: {
+    musicName:String,
     playList:{
       type:[],
       default:[]
@@ -151,21 +155,25 @@ export default {
     },
   },
   methods:{
-    setPlayingId(id){
+    setPlayingId(id,musicName){
+      this.musicName = musicName;
       this.playingId = id;
     },
     playNext(){
       let id = this.playingId;
+      let name = this.musicName;
       for (let i = 0;i<this.playList.length;i++) {
         if(this.playList[i][0]==id){
           if (i!=this.playList.length-1){
             id = this.playList[i+1][0];
+            name = this.playList[i+1][1];
             this.playList.splice(i,1);
             console.log("下一首"+id);
             break;
           }
           else {
             id = null;
+            name = null;
             this.playList.splice(i,1);
             console.log("下一首已经没了");
             break;
@@ -177,6 +185,7 @@ export default {
         this.loadPic(id);
       }
       this.playingId = id;
+      this.musicName = name;
     },
     addPlayList(id,name,artist){
       let unit = [];
@@ -261,6 +270,7 @@ export default {
               Vue.axios.get('/isOk?id='+encodeURIComponent(id)).then((response)=>{
                 if (response.data.data=='no'){
                   alert("收费歌曲,无法播放");
+                  this.playNext();
                   return;
                 }
               })
