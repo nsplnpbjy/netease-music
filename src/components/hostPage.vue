@@ -15,7 +15,7 @@
       </div>
     </div>
     <div>
-    <audio ref="audioRef" :src = 'audioSrc'  id="player" preload="auto" controls @timeupdate="timeUpDate"  @loadstart="loadNew()" @canplay="canplay()" >
+    <audio ref="audioRef" :src = 'audioSrc'  id="player" preload="auto" controls @timeupdate="timeUpDate"  @loadstart="loadNew()" @canplay="canplay()" @ended="playNext()" >
       你的浏览器不支持audio标签
     </audio>
     </div>
@@ -25,6 +25,37 @@
       <textarea class="audio" v-model="showingLyric" readonly="readonly" style="margin: 0px; height: 100px; width: 100%; resize: none; border: none" :hidden="isNotShowingLyric">
 
       </textarea>
+    </div>
+    <div>
+      <div>
+        <el-divider></el-divider>
+      </div>
+      <el-button type="primary" @click="showDrawer = true">播放列表</el-button>
+      <el-drawer
+          title="播放列表"
+          :visible.sync="showDrawer"
+          direction="rtl"
+          size="50%">
+        <el-table :data="playList">
+          <el-table-column
+              prop="1"
+              label="歌曲名"
+              style="width: 200px">
+          </el-table-column>
+          <el-table-column
+              prop="2"
+              label="艺人"
+              style="width: 150px">
+          </el-table-column>
+          <el-table-column label="选择" style="width: 100%">
+            <template slot-scope="scope">
+              <el-button
+                  size="mini"
+                  @click="loadSrc(scope.row[0],scope.row[1]);setPlayingId(scope.row[0]);loadPic(scope.row[0]);">▶♫</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-drawer>
     </div>
     <div class="audio">
       <el-table :data="songs" style="width: 100%;height: 450px;overflow: auto" class="forTable">
@@ -42,7 +73,7 @@
           <template slot-scope="scope">
             <el-button
                 size="mini"
-                @click="loadSrc(scope.row.id,scope.row.name);loadPic(scope.row.id)">▶♫</el-button>
+                @click="addPlayList(scope.row.id,scope.row.name,scope.row.artists[0].name)">✚</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -66,6 +97,14 @@ Vue.prototype.axios.defaults.baseURL=baseUrl;
 export default {
   name: 'hostPage',
   props: {
+    playList:{
+      type:[],
+      default:[]
+    },
+    showDrawer:{
+      type:Boolean,
+      default:false,
+    },
     isNotShowingLyric:{
       type:Boolean,
       default:true
@@ -95,6 +134,7 @@ export default {
     },
     data() {
       return {
+        playingId:String,
         lyric:{
           type:String,
           default:""
@@ -111,6 +151,40 @@ export default {
     },
   },
   methods:{
+    setPlayingId(id){
+      this.playingId = id;
+    },
+    playNext(){
+      let id = this.playingId;
+      for (let i = 0;i<this.playList.length;i++) {
+        if(this.playList[i][0]==id){
+          if (i!=this.playList.length-1){
+            id = this.playList[i+1][0];
+            this.playList.splice(i,1);
+            console.log("下一首"+id);
+            break;
+          }
+          else {
+            id = null;
+            this.playList.splice(i,1);
+            console.log("下一首已经没了");
+            break;
+          }
+        }
+      }
+      if (id!=null){
+        this.loadSrc(id,name);
+        this.loadPic(id);
+      }
+      this.playingId = id;
+    },
+    addPlayList(id,name,artist){
+      let unit = [];
+      unit.push(id);
+      unit.push(name);
+      unit.push(artist);
+      this.playList.push(unit);
+    },
     canplay(){
       this.loadingHide = true;
       this.picHide = false;
