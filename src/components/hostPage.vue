@@ -85,8 +85,8 @@
 </template>
 
 <script>
-import axios from 'axios';  //引入axios
-import VueAxios from 'vue-axios';  // 引入vue-axios
+import axios from 'axios'; //引入axios
+import VueAxios from 'vue-axios'; // 引入vue-axios
 import Vue from 'vue'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -307,8 +307,8 @@ export default {
 <style scoped>
 .pic{
   align-content: center;
-  height: 300px;
-  width: 220px;
+  height: 200px;
+  width: 140px;
   border-radius:40%;
   position: relative;
 }
