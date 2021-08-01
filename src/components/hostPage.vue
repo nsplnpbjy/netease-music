@@ -54,12 +54,36 @@
             <template slot-scope="scope">
               <el-button
                   size="mini"
-                  @click="loadSrc(scope.row[0],scope.row[1]);setPlayingId(scope.row[0],scope.row[1]);loadPic(scope.row[0]);">▶♫</el-button>
+                  @click="loadSrc(scope.row[0],scope.row[1]);setPlayingId(scope.row[0],scope.row[1]);
+                  loadPic(scope.row[0]);getComments(scope.row[0])">▶♫</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-drawer>
     </div>
+    <p></p>
+    <div>
+      <el-button type="mini" @click="showComments = true">评论区</el-button>
+      <el-drawer
+          title="评论区"
+          :visible.sync="showComments"
+          direction="ltr"
+          size="40%">
+        <el-table :data="comments">
+          <el-table-column
+              prop="user.nickname"
+              label="用户"
+              style="width: 10%">
+          </el-table-column>
+          <el-table-column
+              prop="content"
+              label="评论"
+              style="width: 90%">
+          </el-table-column>
+        </el-table>
+      </el-drawer>
+    </div>
+
     <div class="audio">
       <el-table :data="songs" style="width: 100%;height: 450px;overflow: auto" class="forTable">
         <el-table-column
@@ -100,6 +124,11 @@ Vue.prototype.axios.defaults.baseURL=baseUrl;
 export default {
   name: 'hostPage',
   props: {
+    showComments:{
+      type:Boolean,
+      default:false,
+    },
+    comments:{},
     musicName:String,
     playList:{
       type:[],
@@ -155,6 +184,12 @@ export default {
     },
   },
   methods:{
+    getComments(id){
+      Vue.axios.get('/comments?id='+encodeURIComponent(id)+"&limit=100&offset=0").then((response)=>{
+        this.comments = response.data.data.comments;
+        console.log(this.comments)
+      })
+    },
     setPlayingId(id,musicName){
       this.musicName = musicName;
       this.playingId = id;
