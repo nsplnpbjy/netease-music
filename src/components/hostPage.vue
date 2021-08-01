@@ -85,15 +85,15 @@
 </template>
 
 <script>
-import axios from 'axios'; //引入axios
-import VueAxios from 'vue-axios'; // 引入vue-axios
+import axios from 'axios';  //引入axios
+import VueAxios from 'vue-axios';  // 引入vue-axios
 import Vue from 'vue'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.use(ElementUI);
 Vue.use(VueAxios,axios);  //使用
-var baseUrl = 'http://192.168.0.111:8074';
+var baseUrl = 'http://192.168.0.106:8074';
 Vue.prototype.axios.defaults.baseURL=baseUrl;
 
 

@@ -6,7 +6,6 @@
 
 <script>
 import hostPage from "./components/hostPage.vue"
-
 export default {
   name: 'App',
   components: {
