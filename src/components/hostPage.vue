@@ -68,7 +68,7 @@
           title="评论区"
           :visible.sync="showComments"
           direction="ltr"
-          size="55%">
+          size="80%">
         <el-table :data="comments">
           <el-table-column
               prop="user.nickname"
