@@ -85,20 +85,23 @@
     </div>
 
     <div class="audio">
-      <el-table :data="songs" style="width: 100%;height: 450px;overflow: auto" class="forTable">
+      <el-table  :header-cell-style="{background:'#f5f5f5',color:'#606266'}"
+                 :row-style="{background:'#f5f5f5',color:'#606266'}"
+                 :data="songs" style="width: 100%;height: 450px;overflow: auto;background-color: whitesmoke" class="forTable">
         <el-table-column
             prop="name"
             label="歌曲名"
-            style="width: 100%">
+            style="width: 100%;background-color: whitesmoke;color: whitesmoke">
         </el-table-column>
         <el-table-column
             prop="artists[0].name"
             label="艺人"
-            style="width: 100%">
+            style="width: 100%;background-color: whitesmoke;color: whitesmoke">
         </el-table-column>
-        <el-table-column label="选择" style="width: 100%">
+        <el-table-column label="选择" style="width: 100%;background-color: whitesmoke;color: whitesmoke">
           <template slot-scope="scope">
             <el-button
+                style="background-color: whitesmoke"
                 size="mini"
                 @click="addPlayList(scope.row.id,scope.row.name,scope.row.artists[0].name)">✚</el-button>
           </template>
@@ -117,7 +120,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.use(ElementUI);
 Vue.use(VueAxios,axios);  //使用
-var baseUrl = 'http://192.168.0.106:8074';
+var baseUrl = 'http://jp.cdjxt.net:31289';
 Vue.prototype.axios.defaults.baseURL=baseUrl;
 
 
@@ -342,7 +345,7 @@ export default {
 <style scoped>
 .pic{
   align-content: center;
-  height: 200px;
+  height: 180px;
   width: 140px;
   border-radius:40%;
   position: relative;
@@ -351,6 +354,7 @@ export default {
   align: center;
   text-align: right;
   align-content: center;
+  background-color: whitesmoke;
 }
 .audio {
   font-size: 18px;
