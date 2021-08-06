@@ -14,6 +14,9 @@
         <p>...正在加载，请稍后...</p>
       </div>
     </div>
+    <div :hidden="videoHide">
+      <video :src = "videoSrc" ref="videoRef" controls :disabled="videoDisable"></video>
+    </div>
     <div>
     <audio ref="audioRef" :src = 'audioSrc'  id="player" preload="auto" controls @timeupdate="timeUpDate"  @loadstart="loadNew()" @canplay="canplay()" @ended="playNext()" >
       你的浏览器不支持audio标签
@@ -54,8 +57,15 @@
             <template slot-scope="scope">
               <el-button
                   size="mini"
-                  @click="loadSrc(scope.row[0],scope.row[1]);setPlayingId(scope.row[0],scope.row[1]);
+                  @click="disableVideo();loadSrc(scope.row[0],scope.row[1]);setPlayingId(scope.row[0],scope.row[1]);
                   loadPic(scope.row[0]);getComments(scope.row[0])">▶♫</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column label="尝试播放MV" style="width: 100%">
+            <template slot-scope="scope">
+              <el-button
+                  size="mini"
+                  @click="tryPlayMv(scope.row[3])">尝试播放</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -103,7 +113,7 @@
             <el-button
                 style="background-color: whitesmoke"
                 size="mini"
-                @click="addPlayList(scope.row.id,scope.row.name,scope.row.artists[0].name)">✚</el-button>
+                @click="addPlayList(scope.row.id,scope.row.name,scope.row.artists[0].name,scope.row.mvid)">✚</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -127,6 +137,15 @@ Vue.prototype.axios.defaults.baseURL=baseUrl;
 export default {
   name: 'hostPage',
   props: {
+    videoDisable:{
+      type:Boolean,
+      default:true
+    },
+    videoHide:{
+      type:Boolean,
+      default:true
+    },
+    videoSrc:null,
     showComments:{
       type:Boolean,
       default:false,
@@ -187,6 +206,35 @@ export default {
     },
   },
   methods:{
+    disableVideo(){
+      this.$refs.videoRef.pause();
+      this.videoHide = true;
+      this.videoDisable = true;
+    },
+    tryPlayMv(id){
+      Vue.axios.get('/mv?id='+id).then((res)=>{
+        if (typeof res.data.code != undefined){
+          if (res.data.code==10001){
+            alert("此歌曲没有mv");
+            return;
+          }
+          if (res.data.code==400){
+            alert("网易云服务器繁忙");
+            return;
+          }
+          else {
+            this.$refs.audioRef.pause();
+            this.videoDisable = false;
+            this.$refs.videoRef.pause();
+            this.logoHide = true;
+            this.picHide = true;
+            this.videoHide = false;
+            this.videoSrc = baseUrl+'/mv?id='+id;
+            this.$refs.videoRef.play();
+          }
+        }
+      })
+    },
     getComments(id){
       Vue.axios.get('/comments?id='+encodeURIComponent(id)+"&limit=100&offset=0").then((response)=>{
         this.comments = response.data.data.comments;
@@ -225,11 +273,12 @@ export default {
       this.playingId = id;
       this.musicName = name;
     },
-    addPlayList(id,name,artist){
+    addPlayList(id,name,artist,mvid){
       let unit = [];
       unit.push(id);
       unit.push(name);
       unit.push(artist);
+      unit.push(mvid);
       this.playList.push(unit);
     },
     canplay(){
