@@ -14,8 +14,8 @@
         <p>...正在加载，请稍后...</p>
       </div>
     </div>
-    <div :hidden="videoHide">
-      <video :src = "videoSrc" ref="videoRef" controls :disabled="videoDisable"></video>
+    <div :hidden="videoHide" class="vid-wrap">
+      <video :src = "videoSrc" ref="videoRef" controls :disabled="videoDisable" autoplay ></video>
     </div>
     <div>
     <audio ref="audioRef" :src = 'audioSrc'  id="player" preload="auto" controls @timeupdate="timeUpDate"  @loadstart="loadNew()" @canplay="canplay()" @ended="playNext()" >
@@ -41,7 +41,7 @@
           title="播放列表"
           :visible.sync="showDrawer"
           direction="rtl"
-          size="70%">
+          size="90%">
         <el-table :data="playList">
           <el-table-column
               prop="1"
@@ -412,5 +412,18 @@ export default {
   color: gray;
   margin-top: 60px;
   overflow: hidden;
+}
+.vid-wrap{
+  width:100%;background: #000;
+  position:relative;
+  padding-bottom:56.25%;    /*需要用padding来维持16:9比例,也就是9除以16*/
+  height: 0;
+}
+.vid-wrap video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%
 }
 </style>
