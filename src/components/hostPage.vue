@@ -212,8 +212,7 @@ export default {
       this.videoDisable = true;
     },
     tryPlayMv(id){
-      Vue.axios.get('/mv?id='+id).then((res)=>{
-        if (typeof res.data.code != undefined){
+      Vue.axios.get('/getTrueMvUrl?id='+id).then((res)=>{
           if (res.data.code==10001){
             alert("此歌曲没有mv");
             return;
@@ -232,7 +231,6 @@ export default {
             this.videoSrc = baseUrl+'/mv?id='+id;
             this.$refs.videoRef.play();
           }
-        }
       })
     },
     getComments(id){
