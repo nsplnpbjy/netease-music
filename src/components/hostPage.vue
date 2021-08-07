@@ -228,7 +228,8 @@ export default {
             this.logoHide = true;
             this.picHide = true;
             this.videoHide = false;
-            this.videoSrc = baseUrl+'/mv?id='+id;
+            this.videoSrc = res.data;
+            console.log(this.videoSrc);
             this.$refs.videoRef.play();
           }
       })
