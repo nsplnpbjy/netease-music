@@ -214,11 +214,11 @@ export default {
     tryPlayMv(id){
       Vue.axios.get('/getTrueMvUrl?id='+id).then((res)=>{
           if (res.data.code==10001){
-            alert("此歌曲没有mv");
+            alert("此歌曲没有mv（mv可能收费）");
             return;
           }
           if (res.data.code==400){
-            alert("网易云服务器繁忙");
+            alert("此歌曲没有mv（mv可能收费）");
             return;
           }
           else {
