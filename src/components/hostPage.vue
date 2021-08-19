@@ -22,8 +22,8 @@
       你的浏览器不支持audio标签
     </audio>
     </div>
-    <input v-model="searchText" placeholder="请输入歌曲名"/>
-    <button v-on:click="searchMethod">搜索</button>
+    <input v-model="searchText" placeholder="请输入歌曲名" @keypress.enter="searchMethod"/>
+    <el-button type="success" round v-on:click="searchMethod">搜索</el-button>
     <div>
       <textarea class="audio" v-model="showingLyric" readonly="readonly" style="margin: 0px; height: 100px; width: 100%; resize: none; border: none" :hidden="isNotShowingLyric">
 
@@ -124,9 +124,9 @@
 <script>
 import axios from 'axios';  //引入axios
 import VueAxios from 'vue-axios';  // 引入vue-axios
-import Vue from 'vue'
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
+import Vue from 'vue';
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(ElementUI);
 Vue.use(VueAxios,axios);  //使用
@@ -150,7 +150,8 @@ export default {
       type:Boolean,
       default:false,
     },
-    comments:{},
+    comments:{
+    },
     musicName:String,
     playList:{
       type:[],
