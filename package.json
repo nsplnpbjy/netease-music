@@ -5,14 +5,19 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps"
   },
+  "main": "background.js",
   "dependencies": {
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "element-ui": "^2.15.3",
     "less-loader": "^6.0.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "^6.0.1",
     "vue": "^2.6.11",
     "vue-audio": "0.0.12",
     "vue-axios": "^3.2.4",
@@ -23,10 +28,13 @@
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
+    "electron": "^12.0.0",
+    "electron-devtools-installer": "^3.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "rabbit-lyrics": "^2.1.1",
     "sass-loader": "^8.0.2",
+    "vue-cli-plugin-electron-builder": "^2.1.1",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
