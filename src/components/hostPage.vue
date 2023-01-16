@@ -130,7 +130,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(ElementUI);
 Vue.use(VueAxios,axios);  //使用
-var baseUrl = 'http://jp.cdjxt.net:31289';
+var baseUrl = 'https://comradegenrr.top:8075';
 Vue.prototype.axios.defaults.baseURL=baseUrl;
 
 
